@@ -7,8 +7,7 @@
   <div>
     <textarea id="input">
 S1 -> S2: a
-S2 -> S3: b
-S2 -> S3: c
+S2 -> S3: b, c
     </textarea>
   </div>
 
@@ -143,10 +142,26 @@ S2 -> S3: c
         .attr("y", "0.31em")
         .text((d) => d.id);
 
+      const labels = svg
+        .append("g")
+        .attr("fill", "none")
+        .selectAll("g")
+        .data(links)
+        .join("g");
+
+      labels
+        .append("text")
+        .attr("x", -10)
+        .attr("y", "0.31em")
+        .attr("fill", "#000")
+        .text((d) => d.symbol);
+
       simulation.on("tick", () => {
         link.attr("d", linkArc);
 
         node.attr("transform", (d) => `translate(${d.x},${d.y})`);
+
+        labels.attr("transform", linkLabel);
       });
     })();
 
@@ -156,6 +171,12 @@ S2 -> S3: c
             M${d.source.x},${d.source.y}
             A${r},${r} 0 0,1 ${d.target.x},${d.target.y}
         `;
+    }
+
+    function linkLabel(d) {
+        let x = (d.source.x + d.target.x) / 2;
+        let y = (d.source.y + d.target.y) / 2
+        return `translate(${x},${y})`;
     }
 
     function drag(simulation) {

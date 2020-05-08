@@ -92,14 +92,31 @@ S2 -> S3: c
         .force("center", d3.forceCenter(width / 2, height / 2))
         .force("collision", d3.forceCollide().radius(STATE_RADIOUS));
 
+      svg
+        .append("defs")
+        .selectAll("marker")
+        .data(["default"])
+        .join("marker")
+        .attr("id", (d) => `arrow-${d}`)
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", 30)
+        .attr("refY", -3)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("fill", "#777")
+        .attr("d", "M0,-5L10,0L0,5");
+
       const link = svg
         .append("g")
-        .attr("stroke", "#777")
-        .attr("stroke-opacity", 0.6)
-        .selectAll("line")
+        .attr("fill", "none")
+        .attr("stroke-width", 1.5)
+        .selectAll("path")
         .data(links)
-        .join("line")
-        .attr("stroke-width", 1);
+        .join("path")
+        .attr("stroke", "#777")
+        .attr("marker-end", "url(#arrow-default)");
 
       const node = svg
         .append("g")
@@ -127,11 +144,7 @@ S2 -> S3: c
         .text((d) => d.id);
 
       simulation.on("tick", () => {
-        link
-          .attr("x1", (d) => d.source.x)
-          .attr("y1", (d) => d.source.y)
-          .attr("x2", (d) => d.target.x)
-          .attr("y2", (d) => d.target.y);
+        link.attr("d", linkArc);
 
         node.attr("transform", (d) => `translate(${d.x},${d.y})`);
       });

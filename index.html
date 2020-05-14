@@ -2,20 +2,36 @@
 <head>
   <title>State Machine Diagram</title>
   <script src="https://d3js.org/d3.v5.min.js"></script>
+  <style type="text/css">
+    #layout {
+      display: flex;
+    }
+  </style>
 </head>
 <body>
-  <div>
-    <textarea id="input">
+  <div id="layout">
+    <div id="layout-start">
+        <form method="GET">
+      <textarea id="input" cols="30" rows="50" name="input">
 S1 -> S2: a
 S2 -> S3: b, c
-    </textarea>
-  </div>
+      </textarea>
+      <input type="submit" />
+    </form>
+    </div>
 
-  <div>
-    <svg id="output" width="1000" height="800"></svg>
+    <div id="layout-end">
+      <svg id="output" width="1000" height="800"></svg>
+    </div>
   </div>
 
   <script type="text/javascript">
+    var url = new URL(window.location.href);
+    var urlParam = url.searchParams.get("input");
+    if (urlParam) {
+        document.getElementById("input").value = urlParam;
+    }
+
     const STATE_RADIOUS = 20;
     function parseData() {
       // should return { nodes: [{id}], links: [{source, target, symbol}]
@@ -84,10 +100,10 @@ S2 -> S3: b, c
           "link",
           d3
             .forceLink(links)
-            .distance(100)
+            .distance(200)
             .id((d) => d.id)
         )
-        .force("charge", d3.forceManyBody().strength(-100))
+        .force("charge", d3.forceManyBody().strength(-300))
         .force("center", d3.forceCenter(width / 2, height / 2))
         .force("collision", d3.forceCollide().radius(STATE_RADIOUS));
 
@@ -168,15 +184,15 @@ S2 -> S3: b, c
     function linkArc(d) {
       const r = Math.hypot(d.target.x - d.source.x, d.target.y - d.source.y);
       return `
-            M${d.source.x},${d.source.y}
-            A${r},${r} 0 0,1 ${d.target.x},${d.target.y}
-        `;
+        M${d.source.x},${d.source.y}
+        A${r},${r} 0 0,1 ${d.target.x},${d.target.y}
+    `;
     }
 
     function linkLabel(d) {
-        let x = (d.source.x + d.target.x) / 2;
-        let y = (d.source.y + d.target.y) / 2
-        return `translate(${x},${y})`;
+      let x = (d.source.x + d.target.x) / 2;
+      let y = (d.source.y + d.target.y) / 2;
+      return `translate(${x},${y})`;
     }
 
     function drag(simulation) {

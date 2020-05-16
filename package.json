@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "parcel src/index.html --global=fsm",
-    "docs": "rm docs/* && parcel build src/index.html --global=fsm --out-dir=docs --no-source-maps"
+    "docs": "rm docs/* && parcel build src/index.html --global=fsm --out-dir=docs --public-url=/am-editor --no-source-maps"
   },
   "author": "sergiouph",
   "license": "ISC",

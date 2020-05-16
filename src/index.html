@@ -19,7 +19,6 @@
         cols="30"
         rows="50"
         name="input"
-        onchange="refresh()"
       ></textarea>
     </div>
     <div id="output"></div>
@@ -37,6 +36,8 @@
         })
         .catch((e) => console.error(e));
     }
+
+    document.getElementById('input').onchange = refresh
 
     ame
       .loadExample()

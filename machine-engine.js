@@ -74,11 +74,11 @@ function makeTransition(machine, { source, target, symbol, note }) {
         machine.transitions.push(result)
     }
     
-    if (symbol) {
+    if (symbol && !result.symbols.includes(symbol)) {
         result.symbols.push(symbol)
     }
 
-    if (note) {
+    if (note && !result.notes.includes(note)) {
         result.notes.push(note)
     }
     

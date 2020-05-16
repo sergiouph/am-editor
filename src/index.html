@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
-  <title>State Machine Diagram</title>
-  <script src="index.js"></script>
+  <title>Automata Editor</title>
+  <script src="index.ts"></script>
   <style type="text/css">
     #layout {
       display: flex;
@@ -14,16 +14,37 @@
 <body>
   <div id="layout">
     <div>
-      <textarea id="input" cols="30" rows="50" name="input" onchange="fsm.refresh()">
-I S1 ! A
-A S3
-S S2 ! B
-T S1 -> S2 : a ! C
-T S2 -> S3 : b</textarea>
+      <textarea
+        id="input"
+        cols="30"
+        rows="50"
+        name="input"
+        onchange="refresh()"
+      ></textarea>
     </div>
     <div id="output"></div>
   </div>
   <script>
-    fsm.refresh()
+    function refresh() {
+      ame
+        .generateSvgElement(document.getElementById('input').value)
+        .then((element) => {
+          const container = document.getElementById('output');
+          while (container.firstChild) {
+            container.removeChild(container.lastChild);
+          }
+          container.appendChild(element);
+        })
+        .catch((e) => console.error(e));
+    }
+
+    ame
+      .loadExample()
+      .then((text) => {
+        document.getElementById('input').value = text
+        
+        refresh()
+      })
+      .catch((e) => console.error(e));
   </script>
 </body>

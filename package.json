@@ -1,11 +1,11 @@
 {
-  "name": "state-machine-diagram",
+  "name": "am-editor",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "parcel src/index.html --global=fsm",
-    "docs": "rm docs/* && parcel build src/index.html --global=fsm --out-dir=docs --public-url=/am-editor --no-source-maps"
+    "dev": "parcel src/index.html --global=ame",
+    "docs": "rm docs/* && parcel build src/index.html --global=ame --out-dir=docs --public-url=/am-editor --no-source-maps"
   },
   "author": "sergiouph",
   "license": "ISC",
@@ -13,6 +13,7 @@
     "viz.js": "^2.1.2"
   },
   "devDependencies": {
-    "parcel-bundler": "^1.12.4"
+    "parcel-bundler": "^1.12.4",
+    "typescript": "^3.9.2"
   }
 }

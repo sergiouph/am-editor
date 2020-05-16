@@ -1,0 +1,14 @@
+{
+  "name": "state-machine-diagram",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "sergiouph",
+  "license": "ISC",
+  "dependencies": {
+    "viz.js": "^2.1.2"
+  }
+}

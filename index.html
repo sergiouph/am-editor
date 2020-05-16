@@ -1,223 +1,55 @@
 <!DOCTYPE html>
 <head>
   <title>State Machine Diagram</title>
-  <script src="https://d3js.org/d3.v5.min.js"></script>
   <style type="text/css">
     #layout {
       display: flex;
+    }
+    #input {
+      font-family: monospace;
     }
   </style>
 </head>
 <body>
   <div id="layout">
-    <div id="layout-start">
-        <form method="GET">
-      <textarea id="input" cols="30" rows="50" name="input">
-S1 -> S2: a
-S2 -> S3: b, c
-      </textarea>
-      <input type="submit" />
-    </form>
+    <div>
+      <textarea id="input" cols="30" rows="50" name="input" onchange="refresh()">
+I S1 ! A
+A S3
+S S2 ! B
+T S1 -> S2 : a ! C
+T S2 -> S3 : b</textarea>
     </div>
-
-    <div id="layout-end">
-      <svg id="output" width="1000" height="800"></svg>
-    </div>
+    <div id="output"></div>
   </div>
 
-  <script type="text/javascript">
-    var url = new URL(window.location.href);
-    var urlParam = url.searchParams.get("input");
-    if (urlParam) {
-        document.getElementById("input").value = urlParam;
-    }
+  <script src="machine-engine.js"></script>
+  <script src="machine-parser.js"></script>
+  <script src="machine-formatter.js"></script>
+  <script src="node_modules/viz.js/viz.js"></script>
+  <script src="node_modules/viz.js/full.render.js"></script>
+  <script>
+    refresh()
 
-    const STATE_RADIOUS = 20;
-    function parseData() {
-      // should return { nodes: [{id}], links: [{source, target, symbol}]
-      let input = document.getElementById("input");
+    function refresh() {
+      const input = document.getElementById('input').value
+      const machine = parseMachine(input)
+      console.log(machine)
+      const code = generateVizCode(machine);
+      const viz = new Viz();
 
-      function splitLine(line) {
-        if (line.trim()) {
-          let items = line.split("->");
+      console.log(code)
 
-          if (items.length != 2) {
-            throw new Error("invalid line");
+      viz
+        .renderSVGElement(code)
+        .then(function (element) {
+          const container = document.getElementById('output')
+          while (container.firstChild) {
+            container.removeChild(container.lastChild)
           }
-
-          items = [items[0], ...items[1].split(":")];
-
-          if (items.length != 3) {
-            throw new Error("invalid line");
-          }
-
-          return {
-            source: items[0].trim(),
-            target: items[1].trim(),
-            symbol: items[2].trim(),
-          };
-        }
-
-        return null;
-      }
-
-      const links = [];
-      const nodes = [];
-      for (const line of input.value.split("\n")) {
-        const link = splitLine(line);
-
-        if (link != null) {
-          links.push(link);
-
-          if (nodes.indexOf(link.source) === -1) {
-            nodes.push(link.source);
-          }
-
-          if (nodes.indexOf(link.target) === -1) {
-            nodes.push(link.target);
-          }
-        }
-      }
-
-      return {
-        nodes: nodes.map((d) => ({ id: d })),
-        links,
-      };
-    }
-
-    var svg = d3.select("#output"),
-      width = +svg.attr("width"),
-      height = +svg.attr("height");
-
-    (function () {
-      var data = parseData();
-      const links = data.links.map((d) => Object.create(d));
-      const nodes = data.nodes.map((d) => Object.create(d));
-
-      const simulation = d3
-        .forceSimulation(nodes)
-        .force(
-          "link",
-          d3
-            .forceLink(links)
-            .distance(200)
-            .id((d) => d.id)
-        )
-        .force("charge", d3.forceManyBody().strength(-300))
-        .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("collision", d3.forceCollide().radius(STATE_RADIOUS));
-
-      svg
-        .append("defs")
-        .selectAll("marker")
-        .data(["default"])
-        .join("marker")
-        .attr("id", (d) => `arrow-${d}`)
-        .attr("viewBox", "0 -5 10 10")
-        .attr("refX", 30)
-        .attr("refY", -3)
-        .attr("markerWidth", 6)
-        .attr("markerHeight", 6)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("fill", "#777")
-        .attr("d", "M0,-5L10,0L0,5");
-
-      const link = svg
-        .append("g")
-        .attr("fill", "none")
-        .attr("stroke-width", 1.5)
-        .selectAll("path")
-        .data(links)
-        .join("path")
-        .attr("stroke", "#777")
-        .attr("marker-end", "url(#arrow-default)");
-
-      const node = svg
-        .append("g")
-        .attr("fill", "currentColor")
-        .attr("stroke-linecap", "round")
-        .attr("stroke-linejoin", "round")
-        .selectAll("g")
-        .data(nodes)
-        .join("g")
-        .call(drag(simulation));
-
-      // Create state circle
-      node
-        .append("circle")
-        .attr("stroke", "#000")
-        .attr("fill", "#FFF")
-        .attr("stroke-width", 1.5)
-        .attr("r", STATE_RADIOUS);
-
-      // Create state labels
-      node
-        .append("text")
-        .attr("x", -10)
-        .attr("y", "0.31em")
-        .text((d) => d.id);
-
-      const labels = svg
-        .append("g")
-        .attr("fill", "none")
-        .selectAll("g")
-        .data(links)
-        .join("g");
-
-      labels
-        .append("text")
-        .attr("x", -10)
-        .attr("y", "0.31em")
-        .attr("fill", "#000")
-        .text((d) => d.symbol);
-
-      simulation.on("tick", () => {
-        link.attr("d", linkArc);
-
-        node.attr("transform", (d) => `translate(${d.x},${d.y})`);
-
-        labels.attr("transform", linkLabel);
-      });
-    })();
-
-    function linkArc(d) {
-      const r = Math.hypot(d.target.x - d.source.x, d.target.y - d.source.y);
-      return `
-        M${d.source.x},${d.source.y}
-        A${r},${r} 0 0,1 ${d.target.x},${d.target.y}
-    `;
-    }
-
-    function linkLabel(d) {
-      let x = (d.source.x + d.target.x) / 2;
-      let y = (d.source.y + d.target.y) / 2;
-      return `translate(${x},${y})`;
-    }
-
-    function drag(simulation) {
-      function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
-      }
-
-      function dragged(d) {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
-      }
-
-      function dragended(d) {
-        if (!d3.event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
-      }
-
-      return d3
-        .drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended);
+          container.appendChild(element)
+        })
+        .catch((error) => console.error(error));
     }
   </script>
 </body>

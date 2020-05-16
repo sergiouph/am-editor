@@ -1,11 +1,11 @@
-function createMachine() {
+export function createMachine() {
     return {
         states: [],
         transitions: [],
     }
 }
 
-function makeState(machine, { name, initial, accepted, note }) {
+export function makeState(machine, { name, initial, accepted, note }) {
     let result = null
     
     for (const state of machine.states) {
@@ -50,7 +50,7 @@ function makeState(machine, { name, initial, accepted, note }) {
     return result;
 }
 
-function makeTransition(machine, { source, target, symbol, note }) {
+export function makeTransition(machine, { source, target, symbol, note }) {
     if (!source || !target) {
         throw new Error('Expected source and target.')
     }

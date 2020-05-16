@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<head>
+  <title>State Machine Diagram</title>
+  <script src="index.js"></script>
+  <style type="text/css">
+    #layout {
+      display: flex;
+    }
+    #input {
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div id="layout">
+    <div>
+      <textarea id="input" cols="30" rows="50" name="input" onchange="fsm.refresh()">
+I S1 ! A
+A S3
+S S2 ! B
+T S1 -> S2 : a ! C
+T S2 -> S3 : b</textarea>
+    </div>
+    <div id="output"></div>
+  </div>
+  <script>
+    fsm.refresh()
+  </script>
+</body>

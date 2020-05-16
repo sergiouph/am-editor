@@ -1,3 +1,5 @@
+import { createMachine, makeState, makeTransition } from './machine-engine'
+
 const BLANKS = [' ', '\t', '\n', '\r']
 
 function tokenize(input) {
@@ -86,7 +88,7 @@ function tryRead(tokens, expected) {
     return null
 }
 
-function parseMachine(input) {
+export function parseMachine(input) {
     const machine = createMachine()
     const tokens = tokenize(input)
 

@@ -1,4 +1,4 @@
-function generateVizCode(machine) {
+export function generateVizCode(machine) {
     const output = []
     const notesLegend = {}
     const notesLegendPrefix = '#'

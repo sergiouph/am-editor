@@ -3,12 +3,25 @@
   <title>Automata Editor</title>
   <script src="index.ts"></script>
   <style type="text/css">
-    #layout {
-      display: flex;
-    }
-    #input {
-      font-family: monospace;
-    }
+  body {
+    margin: 0;
+    padding: 0;
+  }
+  #layout {
+    display: flex;
+    height: 95vh;
+    width: 95vw;
+  }
+  #input {
+    font-family: monospace;
+    height: 100%;
+  }
+  #output {
+    overflow-x: scroll;
+  }
+  #error {
+    color: red;
+  }
   </style>
 </head>
 <body>
@@ -17,35 +30,17 @@
       <textarea
         id="input"
         cols="30"
-        rows="50"
         name="input"
       ></textarea>
+      <div id="error"></div>
     </div>
     <div id="output"></div>
   </div>
   <script>
-    function refresh() {
-      ame
-        .generateSvgElement(document.getElementById('input').value)
-        .then((element) => {
-          const container = document.getElementById('output');
-          while (container.firstChild) {
-            container.removeChild(container.lastChild);
-          }
-          container.appendChild(element);
-        })
-        .catch((e) => console.error(e));
-    }
-
-    document.getElementById('input').onchange = refresh
-
-    ame
-      .loadExample()
-      .then((text) => {
-        document.getElementById('input').value = text
-        
-        refresh()
-      })
-      .catch((e) => console.error(e));
+    ame.init(
+      document.getElementById('input'), 
+      document.getElementById('output'), 
+      document.getElementById('error'),
+    )
   </script>
 </body>

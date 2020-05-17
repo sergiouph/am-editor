@@ -6,7 +6,10 @@ import jsonNumberAm from './assets/json-number.am'
 import { generateVizCode } from './machine-formatter'
 import { parseMachine } from './machine-parser'
 
-export async function generateSvgElement(input: string) {
+import $ from 'jquery'
+import _ from 'lodash'
+
+async function generateSvgElement(input: string) {
     const machine = parseMachine(input)
     
     console.log(machine)
@@ -19,8 +22,47 @@ export async function generateSvgElement(input: string) {
     return viz.renderSVGElement(code)
 }
 
-export async function loadExample() {
+async function loadExample() {
     const response = await fetch(jsonNumberAm)
     
     return response.text()
+}
+
+async function refresh($input, $output, $error) {
+    try {
+        const input = $input.val()
+        const svgElement = await generateSvgElement(input)
+
+        $output.empty()
+        $output.append(svgElement)
+
+        $error.text('')
+    }
+    catch (e) {
+        console.error(e)
+        $error.text(String(e))
+    }
+}
+
+
+export function init(inputElement: Element, outputElement: Element, errorElement: Element) {
+    const $input = $(inputElement);
+    const $output = $(outputElement);
+    const $error = $(errorElement);
+    
+    (async () => {
+        try {
+            $input.on('change keyup paste', _.throttle(() => refresh($input, $output, $error), 1000))
+
+            const example = await loadExample()
+
+            $input.val(example)
+
+            await refresh($input, $output, $error)
+        }
+        catch (e) {
+            console.error(e)
+            $error.text(String(e))
+        }
+    })();
 }

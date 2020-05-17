@@ -21,10 +21,7 @@ function tokenize(input) {
 
     for (const char of input) {
         if (delimiter !== null) {
-            if (char === '\\') {
-                escaped = true
-            }
-            else if (escaped) {
+            if (escaped) {
                 escaped = false
                 if (['\"', '\'', '\\'].includes(char)) {
                     buffer.push(char)
@@ -38,6 +35,9 @@ function tokenize(input) {
                 else {
                     throw new Error(`Unsupported escaped char: ${JSON.stringify(char)}`)
                 }
+            }
+            else if (char === '\\') {
+                escaped = true
             }
             else if (char === delimiter) {
                 flushBuffer()

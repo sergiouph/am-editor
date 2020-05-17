@@ -25,22 +25,12 @@ export function makeState(machine, { name, initial, accepted, note }) {
         machine.states.push(result)
     }
 
-    if (initial === true || initial === false) {
-        if (result.initial === null) {
-            result.initial = initial
-        }
-        else if (result.initial !== initial) {
-            throw new Error(`Ambiguous state definition: ${name}`)
-        }
+    if (initial === true) {
+        result.initial = true
     }
 
-    if (accepted === true || accepted === false) {
-        if (result.accepted === null) {
-            result.accepted = accepted
-        }
-        else if (result.accepted !== accepted) {
-            throw new Error(`Ambiguous state definition: ${name}`)
-        }
+    if (accepted === true) {
+        result.accepted = true
     }
 
     if (note) {

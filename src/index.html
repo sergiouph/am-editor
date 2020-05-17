@@ -27,8 +27,8 @@
 <body>
   <div id="layout">
     <div>
-      <select id="dir">
-        <option value="LR">Left-Right</option>
+      <select id="dir" name="dir">
+        <option value="LR" selected>Left-Right</option>
         <option value="TB">Top-Bottom</option>
       </select>
       <br/>
@@ -43,6 +43,7 @@
   </div>
   <script>
     ame.init(
+      window,
       document.getElementById('input'), 
       document.getElementById('dir'), 
       document.getElementById('output'), 

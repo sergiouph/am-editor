@@ -25,7 +25,7 @@ async function loadExample() {
     return response.text()
 }
 
-async function refresh($input, $dir, $output, $error) {
+async function refresh(window: Window, $input, $dir, $output, $error) {
     try {
         const input = $input.val()
         const dir = $dir.val()
@@ -33,6 +33,9 @@ async function refresh($input, $dir, $output, $error) {
 
         $output.empty()
         $output.append(svgElement)
+
+        const url = `?dir=${encodeURIComponent(dir)}&input=${encodeURIComponent(btoa(input))}`
+        window.history.pushState({}, window.document.title, url)
 
         $error.text('')
     }
@@ -43,23 +46,42 @@ async function refresh($input, $dir, $output, $error) {
 }
 
 
-export async function init(inputElement: Element, dirElement: Element, outputElement: Element, errorElement: Element) {
+function loadUrlValues(window: Window, $input, $dir) {
+    const params = new URLSearchParams(window.location.search)
+    const dir = params.get('dir')
+    const input = params.get('input')
+
+    if (input) { $input.val(atob(input)) }
+    if (dir) { $dir.val(dir) }
+}
+
+
+export async function init(
+        window: Window, 
+        inputElement: Element, 
+        dirElement: Element, 
+        outputElement: Element, 
+        errorElement: Element) {
     const $input = $(inputElement);
     const $dir = $(dirElement);
     const $output = $(outputElement);
     const $error = $(errorElement);
+
+    loadUrlValues(window, $input, $dir)
     
     try {
-        const fnRefresh = _.throttle(() => refresh($input, $dir, $output, $error), 1000)
+        const fnRefresh = _.throttle(() => refresh(window, $input, $dir, $output, $error), 1000)
 
         $input.on('change keyup paste', fnRefresh)
         $dir.on('change', fnRefresh)
 
-        const example = await loadExample()
+        if (!$input.val()) {
+            const example = await loadExample()
 
-        $input.val(example)
+            $input.val(example)
+        }
 
-        await refresh($input, $dir, $output, $error)
+        await refresh(window, $input, $dir, $output, $error)
     }
     catch (e) {
         console.error(e)

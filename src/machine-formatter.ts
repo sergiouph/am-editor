@@ -107,7 +107,11 @@ class Graph {
 
     render(output: string[]) {
         output.push(this.type, ' ', dotStringify(this.name), ' {\n')
-        output.push('rankdir=', dotStringify(this.rankdir), ';\n')
+        
+        if (this.rankdir) {
+            output.push('rankdir=', dotStringify(this.rankdir), ';\n')
+        }
+        
         output.push('forcelabels=', dotStringify(this.forcelabels), ';\n')
         for (const node of this.nodes) {
             node.render(output)
@@ -117,39 +121,127 @@ class Graph {
         }
         output.push('}\n')
     }
+
+    createNode(base: string = null): Node {
+        const name = this.nextName(base)
+        const node = new Node(name)
+        this.nodes.push(node)
+        return node
+    }
+
+    containsName(name: string) {
+        for (const node of this.nodes) {
+            if (node.name === name) {
+                return true
+            }
+        }
+        return false
+    }
+
+    nextName(base: string = null) {
+        if (base === null) {
+            base = 'N'
+        }
+
+        let result: string
+        let number = 0
+        do {
+            result = `${base}_${number}`
+
+            number++
+        } while (this.containsName(result))
+
+        return result
+    }
 }
 
-export function generateVizCode(machine: Machine): string {
+export function generateVizCode(machine: Machine, dir: string): string {
     const graph = new Graph()
+    const heads = {}
+    const tails = {}
+
+    graph.rankdir = dir
 
     for (const state of machine.states) {
-        const node = new Node(state.name)
-        node.shape = (state.accepted ? 'doublecircle' : 'circle')
+        let head = null
+        let tail = null
+        const node = graph.createNode('STATE')
         node.label = state.name
-        graph.nodes.push(node)
+        node.shape = (state.accepted ? 'doublecircle' : 'circle')
 
-        if (state.initial) {
-            const node0 = new Node(`${state.name}_TMP${(Math.random() * 1000000).toFixed(0)}`)
-            node0.shape = 'none'
-            node0.label = ''
-            graph.nodes.push(node0)
+        let firstName: string = null
+        let lastNode: Node = null
 
-            const edge0 = new Edge(node0.name, node.name)
-            edge0.arrowhead = 'vee'
-            graph.edges.push(edge0)
+        for (const note of state.notes) {
+            const noteNode = graph.createNode('ACTION')
+            noteNode.label = note
+            noteNode.shape = 'parallelogram'
+
+            if (firstName === null) {
+                firstName = noteNode.name
+            })
+
+            if (lastNode !== null) {
+                const noteEdge = new Edge(lastNode.name, noteNode.name)
+
+                graph.edges.push(noteEdge)
+            }
+
+            lastNode = noteNode
         }
+
+        if (lastNode != null) {
+            const lastEdge = new Edge(lastNode.name, node.name)
+
+            graph.edges.push(lastEdge)
+        }
+
+        heads[state.name] = firstName || node.name
+        tails[state.name] = node.name
+    }
+
+    for (const state of machine.states.filter(s => s.initial)) {
+        const target = heads[state.name]
+        const initialNode = graph.createNode('INITIAL')
+        initialNode.shape = 'none'
+        initialNode.label = ''
+
+        const edge0 = new Edge(initialNode.name, target)
+        edge0.arrowhead = 'vee'
+        graph.edges.push(edge0)
     }
 
     for (const transition of machine.transitions) {
-        const edge = new Edge(transition.source.name, transition.target.name)
-        
+        let source = tails[transition.source.name]
+        let symbol: string
+
         if (transition.symbols.length === 0) {
-            edge.label = '\u03B5'
+            symbol = '\u03B5'
         }
         else {
-            edge.label = [...transition.symbols].join(', ')
+            symbol = [...transition.symbols].join(', ')
         }
 
+        for (const note of transition.notes) {
+            const noteNode = graph.createNode('ACTION')
+            noteNode.label = note
+            noteNode.shape = 'parallelogram'
+
+            const noteEdge = new Edge(source, noteNode.name)
+
+            if (symbol !== null) {
+                noteEdge.label = symbol
+                symbol = null
+            }
+
+            graph.edges.push(noteEdge)
+
+            source = noteNode.name
+        }
+
+        const target = heads[transition.target.name]
+        const edge = new Edge(source, target)
+        edge.label = symbol
         graph.edges.push(edge)
     }
 

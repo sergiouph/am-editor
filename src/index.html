@@ -27,6 +27,11 @@
 <body>
   <div id="layout">
     <div>
+      <select id="dir">
+        <option value="LR">Left-Right</option>
+        <option value="TB">Top-Bottom</option>
+      </select>
+      <br/>
       <textarea
         id="input"
         cols="30"
@@ -39,6 +44,7 @@
   <script>
     ame.init(
       document.getElementById('input'), 
+      document.getElementById('dir'), 
       document.getElementById('output'), 
       document.getElementById('error'),
     )

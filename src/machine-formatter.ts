@@ -1,123 +1,159 @@
 import { Machine, State, Transition } from "./machine-engine"
 
-export function generateVizCode(machine: Machine): string {
-    const output = []
-    const notesLegend = {}
-    const notesLegendPrefix = '#'
-    let notesLegendNextID = 1
+function dotStringify(value: any) {
+    return JSON.stringify(value)
+}
 
-    function registerNotesLegend(notes) {
-        const key = `${notesLegendPrefix}${notesLegendNextID}`
-        notesLegendNextID++
-        notesLegend[key] = notes
-        return key
-    }
-
-    output.push('digraph automaton {\n')
-    output.push('  rankdir=LR;\n')
-    output.push('  forcelabels=true;\n')
-
-    output.push('\n')
-    output.push('  /* States */\n')
-
-    function renderStates(states) {
-        for (const state of states) {
-            let label = state.name
-            let xlabel
-        
-            if (state.notes.length > 0) {
-                xlabel = registerNotesLegend(state.notes)
-            }
-
-            output.push('  ')
-            output.push(state.name)
-            output.push(' [label=')
-            output.push(JSON.stringify(label))
-            if (xlabel) {
-                output.push(', xlabel=')
-                output.push(JSON.stringify(xlabel))
-            }
-            output.push('];\n')
-        }
-    }
-
-    const normalStates = machine.states.filter(s => !s.accepted)
-    if (normalStates.length > 0) {
-        output.push('  node [shape = circle];\n')
-
-        renderStates(normalStates)
-    }
-
-    const acceptedStates = machine.states.filter(s => s.accepted)
-    if (acceptedStates.length > 0) {
-        output.push('  node [shape = doublecircle];\n')
+function renderProperties(output: string[], properties: object) {
+    const names = Object.keys(properties)
     
-        renderStates(acceptedStates)
+    if (names.length > 0) {
+        output.push(' [')
+
+        let count = 0
+
+        for (const name of names) {
+            const value = properties[name]
+
+            if (value !== null) {
+                if (count > 0) {
+                    output.push(', ')
+                }
+
+                output.push(name)
+                output.push('=')
+                output.push(dotStringify(value))
+
+                count++
+            }
+        }
+
+        output.push(']')
+    }
+}
+
+class Node {
+    name: string
+    shape: string
+    label: string
+    xlabel: string
+
+    constructor(name: string) {
+        this.name = name
+        this.shape = null
+        this.label = null
+        this.xlabel = null
     }
 
-    const initialStates = machine.states.filter(s => s.initial)
-    if (initialStates.length > 0) {
-        output.push('\n')
-        output.push('  /* Initial State Transitions */\n')
-        for (const state of initialStates) {
-            const tempState = `${state.name}__TEMP__${(Math.random() * 1000000).toFixed(0)}`
-            output.push(`  ${tempState} [label="", shape=none];\n`)
-            output.push('  ')
-            output.push(tempState)
-            output.push(' -> ')
-            output.push(state.name)
-            output.push('[arrowhead=vee];\n')
+    render(output: string[]) {
+        output.push(this.name)
+
+        renderProperties(output, {
+            'shape': this.shape,
+            'label': this.label,
+            'xlabel': this.xlabel,
+        })
+
+        output.push(';\n')
+    }
+}
+
+class Edge {
+    source: string
+    target: string
+    label: string
+    xlabel: string
+    arrowhead: string
+    
+    constructor(source: string, target: string) {
+        this.source = source
+        this.target = target
+        this.label = null
+        this.xlabel = null
+        this.arrowhead = null
+    }
+
+    render(output: string[]) {
+        output.push(this.source)
+        output.push(' -> ')
+        output.push(this.target)
+
+        renderProperties(output, {
+            'label': this.label,
+            'xlabel': this.xlabel,
+            'arrowhead': this.arrowhead,
+        })
+
+        output.push(';\n')
+    }
+}
+
+class Graph {
+    type: string
+    name: string
+    rankdir: string
+    forcelabels: boolean
+    nodes: Node[]
+    edges: Edge[]
+
+    constructor() {
+        this.type = 'digraph'
+        this.name = 'automaton'
+        this.rankdir = 'LR'
+        this.forcelabels = true
+        this.nodes = []
+        this.edges = []
+    }
+
+    render(output: string[]) {
+        output.push(this.type, ' ', dotStringify(this.name), ' {\n')
+        output.push('rankdir=', dotStringify(this.rankdir), ';\n')
+        output.push('forcelabels=', dotStringify(this.forcelabels), ';\n')
+        for (const node of this.nodes) {
+            node.render(output)
+        }
+        for (const edge of this.edges) {
+            edge.render(output)
+        }
+        output.push('}\n')
+    }
+}
+
+export function generateVizCode(machine: Machine): string {
+    const graph = new Graph()
+
+    for (const state of machine.states) {
+        const node = new Node(state.name)
+        node.shape = (state.accepted ? 'doublecircle' : 'circle')
+        node.label = state.name
+        graph.nodes.push(node)
+
+        if (state.initial) {
+            const node0 = new Node(`${state.name}_TMP${(Math.random() * 1000000).toFixed(0)}`)
+            node0.shape = 'none'
+            node0.label = ''
+            graph.nodes.push(node0)
+
+            const edge0 = new Edge(node0.name, node.name)
+            edge0.arrowhead = 'vee'
+            graph.edges.push(edge0)
         }
     }
-
-    output.push('\n')
-    output.push('  /* Transitions */\n')
 
     for (const transition of machine.transitions) {
-        let label
-
-        if (transition.symbols.size === 0) {
-            label = '\u03B5'
+        const edge = new Edge(transition.source.name, transition.target.name)
+        
+        if (transition.symbols.length === 0) {
+            edge.label = '\u03B5'
         }
         else {
-            label = [...transition.symbols].join(', ')
+            edge.label = [...transition.symbols].join(', ')
         }
 
-        if (transition.notes.length > 0) {
-            const legendKey = registerNotesLegend(transition.notes)
-
-            label = `${label} / ${legendKey}`
-        }
-
-        output.push('  ')
-        output.push(transition.source.name)
-        output.push(' -> ')
-        output.push(transition.target.name)
-        output.push(' [label = ')
-        output.push(JSON.stringify(label))
-        output.push('];\n')
+        graph.edges.push(edge)
     }
 
-    if (Object.keys(notesLegend).length > 0) {
-        output.push('\n')
-        output.push('  /* Notes Legend */\n')
-        output.push('  node [shape=plaintext]\n')
-        output.push('  subgraph notes_legend { \n')
-        output.push('    label="Notes";\n')
-        output.push('    label="Notes";\n')
-        output.push('    notes_legend_table [label=<\n')
-        output.push('      <table border="0" cellpadding="2" cellspacing="0" cellborder="1">\n')
-        
-        for (const key of Object.keys(notesLegend)) {
-            output.push(`      <tr><td>${key}</td><td>${JSON.stringify(notesLegend[key])}</td></tr>`)
-        }
-
-        output.push('      </table>\n')
-        output.push('    >]\n')
-        output.push('  }\n')
-    }
-    
-    output.push('}\n')
-
+    const output = []
+    graph.render(output)
     return output.join('')
 }

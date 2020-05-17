@@ -45,24 +45,22 @@ async function refresh($input, $output, $error) {
 }
 
 
-export function init(inputElement: Element, outputElement: Element, errorElement: Element) {
+export async function init(inputElement: Element, outputElement: Element, errorElement: Element) {
     const $input = $(inputElement);
     const $output = $(outputElement);
     const $error = $(errorElement);
     
-    (async () => {
-        try {
-            $input.on('change keyup paste', _.throttle(() => refresh($input, $output, $error), 1000))
+    try {
+        $input.on('change keyup paste', _.throttle(() => refresh($input, $output, $error), 1000))
 
-            const example = await loadExample()
+        const example = await loadExample()
 
-            $input.val(example)
+        $input.val(example)
 
-            await refresh($input, $output, $error)
-        }
-        catch (e) {
-            console.error(e)
-            $error.text(String(e))
-        }
-    })();
+        await refresh($input, $output, $error)
+    }
+    catch (e) {
+        console.error(e)
+        $error.text(String(e))
+    }
 }

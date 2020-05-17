@@ -1,4 +1,6 @@
-export function generateVizCode(machine) {
+import { Machine, State, Transition } from "./machine-engine"
+
+export function generateVizCode(machine: Machine): string {
     const output = []
     const notesLegend = {}
     const notesLegendPrefix = '#'

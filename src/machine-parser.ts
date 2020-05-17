@@ -1,8 +1,12 @@
-import { createMachine, makeState, makeTransition } from './machine-engine'
+import { Machine, State, Transition } from './machine-engine'
 
 const BLANKS = [' ', '\t', '\n', '\r']
 
-function tokenize(input) {
+interface Token {
+    value: string
+}
+
+function tokenize(input: string): Token[] {
     const tokens = []
     const buffer = []
     let delimiter = null
@@ -63,7 +67,7 @@ function tokenize(input) {
     return tokens
 }
 
-function read(tokens, expected) {
+function read(tokens: Token[], expected: string[] = null): string {
     if (tokens.length === 0) {
         throw new Error('Unexpected EOF')
     }
@@ -77,7 +81,7 @@ function read(tokens, expected) {
     return token.value
 }
 
-function tryRead(tokens, expected) {
+function tryRead(tokens: Token[], expected: string[] = null): string {
     if (tokens.length > 0) {
         if (expected && !expected.includes(tokens[0].value)) {
             return null
@@ -88,8 +92,8 @@ function tryRead(tokens, expected) {
     return null
 }
 
-export function parseMachine(input) {
-    const machine = createMachine()
+export function parseMachine(input: string): Machine {
+    const machine = new Machine()
     const tokens = tokenize(input)
 
     while (tokens.length > 0) {
@@ -106,7 +110,7 @@ export function parseMachine(input) {
     return machine
 }
 
-function tryReadState(tokens, machine) {
+function tryReadState(tokens: Token[], machine: Machine): State {
     const type = tryRead(tokens, ['I', 'A', 'S'])
 
     if (type === null) { return null }
@@ -114,15 +118,10 @@ function tryReadState(tokens, machine) {
     const name = read(tokens)
     const note = tryReadNote(tokens)
 
-    return makeState(machine, { 
-        name,
-        initial: (type === 'I'),
-        accepted: (type === 'A'),
-        note,
-    })
+    return machine.state(name, (type === 'I'), (type === 'A'), note)
 }
 
-function tryReadTransition(tokens, machine) {
+function tryReadTransition(tokens: Token[], machine: Machine): Transition {
     if (tryRead(tokens, ['T']) === null) {
         return null
     }
@@ -133,19 +132,19 @@ function tryReadTransition(tokens, machine) {
 
     const targetName = read(tokens)
     
-    let symbol
+    let symbol: string
     if (tryRead(tokens, [':'])) {
         symbol = read(tokens)
     }
 
     const note = tryReadNote(tokens)
 
-    const source = makeState(machine, { name: sourceName })
-    const target = makeState(machine, { name: targetName })
-    return makeTransition(machine, { source, target, symbol, note })
+    const source = machine.state(sourceName)
+    const target = machine.state(targetName)
+    return machine.transition(source, target, symbol, note)
 }
 
-function tryReadNote(tokens) {
+function tryReadNote(tokens: Token[]): string {
     if (!tryRead(tokens, ['!'])) {
         return null
     }

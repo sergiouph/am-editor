@@ -8,7 +8,7 @@ import { Menu } from './Menu'
 export const App = ({ input0, dir0 }) => {
     const [input, setInput] = useState(input0)
     const [dir, setDir] = useState(dir0)
-    const [menuHidden, setMenuHidden] = useState(false)
+    const [menuHidden, setMenuHidden] = useState(true)
     
     function onChangeInput(e) {
         console.log(e)

@@ -1,0 +1,68 @@
+@use 'fonts';
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+// Toolbar
+.root-panel.split-start {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    padding-inline-start: 10px;
+
+    > * {
+        margin-inline-end: 10px;
+    }
+}
+
+.diagram-panel.split-start {
+    // Code Editor
+    textarea.code-editor {
+        padding: 10px;
+        font-family: 'Anonymous Pro', monospace;
+        font-size: 16px;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        resize: none;
+        box-sizing: border-box;
+        border: none;
+        overflow: auto;
+    }
+}
+
+// Diagram display area
+.diagram-panel.split-end {
+    padding: 5px;
+    overflow: scroll;
+}
+
+
+// Menu
+.menu {
+    padding: 10px;
+}
+
+.split-start, .split-end {
+    background-color: white;
+}
+
+.split-bar {
+    background-color: black;
+    &.split-dir-v {
+        cursor: col-resize;
+    }
+    &.split-dir-h {
+        cursor: row-resize;
+    }
+}

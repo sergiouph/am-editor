@@ -2,9 +2,9 @@ import React, { useEffect, useState, useRef } from 'react'
 import Viz from 'viz.js'
 import { Module, render } from 'viz.js/full.render'
 
-import { generateVizCode } from './machine-formatter'
-import { parseMachine } from './machine-parser'
-import { useAsync } from './tools'
+import { generateVizCode } from '../lib/machine-formatter'
+import { parseMachine } from '../lib/machine-parser'
+import { useAsync } from '../lib/tools'
 
 
 async function generateSvgElement(input: string, dir: string) {
@@ -17,7 +17,7 @@ async function generateSvgElement(input: string, dir: string) {
     return viz.renderSVGElement(code)
 }
 
-const Graph = ({ input, dir }) => {
+export const Diagram = ({ input, dir }) => {
     const svgRef = useRef(null);
     const [error, setError] = useState(null)
     useAsync(async () => {
@@ -41,35 +41,4 @@ const Graph = ({ input, dir }) => {
         }
     });
     return (<div ref={svgRef} />)
-}
-
-export const App = ({ input0, dir0 }) => {
-    const [input, setInput] = useState(input0)
-    const [dir, setDir] = useState(dir0)
-    
-    function onChangeInput(e) {
-        console.log(e)
-        setInput(e.target.value)
-    }
-
-    function onChangeDir(e) {
-        console.log(e)
-        setDir(e.target.value)
-    }
-    
-    return (
-        <div id="layout">
-            <div>
-                <select value={dir} onChange={onChangeDir}>
-                    <option value="LR">Left-Right</option>
-                    <option value="TB">Top-Bottom</option>
-                </select>
-                <br/>
-                <textarea id="input" cols="30" value={input} onChange={onChangeInput} />
-            </div>
-            <div id="output">
-                <Graph input={input} dir={dir} />
-            </div>
-        </div>
-    )
 }

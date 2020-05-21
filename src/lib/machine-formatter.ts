@@ -108,6 +108,10 @@ class Graph {
     render(output: string[]) {
         output.push(this.type, ' ', dotStringify(this.name), ' {\n')
         
+        output.push('graph [fontname = "sans-serif"];\n')
+        output.push('node [fontname = "sans-serif"];\n')
+        output.push('edge [fontname = "sans-serif"];\n')
+
         if (this.rankdir) {
             output.push('rankdir=', dotStringify(this.rankdir), ';\n')
         }
@@ -203,11 +207,10 @@ export function generateVizCode(machine: Machine, dir: string): string {
     for (const state of machine.states.filter(s => s.initial)) {
         const target = heads[state.name]
         const initialNode = graph.createNode('INITIAL')
-        initialNode.shape = 'none'
+        initialNode.shape = 'point'
         initialNode.label = ''
 
         const edge0 = new Edge(initialNode.name, target)
-        edge0.arrowhead = 'vee'
         graph.edges.push(edge0)
     }
 

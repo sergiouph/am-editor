@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom'
 
 import jsonNumberAm from './assets/json-number.am'
 
-import { App } from './app'
+import { App } from './components/App'
 
 async function loadExample() {
     const response = await fetch(jsonNumberAm)

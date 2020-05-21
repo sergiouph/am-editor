@@ -21,6 +21,7 @@
   "devDependencies": {
     "@types/jquery": "^3.3.38",
     "parcel-bundler": "^1.12.4",
+    "sass": "^1.26.5",
     "typescript": "^3.9.2"
   }
 }

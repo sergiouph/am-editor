@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef, CSSProperties, DragEventHandler } from 'react'
+import React, { useEffect, useState, useRef, CSSProperties, MouseEventHandler } from 'react'
+import { classNames } from '../lib/tools';
 
 interface SplitProperties {
     start: React.ReactElement
@@ -15,6 +16,8 @@ interface SplitProperties {
 export const Split = (props: SplitProperties) => {
     const startSized = Boolean(props.startSize)
     const [mainSize, setMainSize] = useState(props.startSize || props.endSize || 100)
+
+    const [drag, setDrag] = useState({})
     
     const barSize = props.barSize || 4;
     const sizeProp = (props.dir==='h' ? 'height' : 'width')
@@ -53,38 +56,44 @@ export const Split = (props: SplitProperties) => {
         endStyles[sizeProp] = mainSize
     }
 
-    let x0: number = null
-    let y0: number = null
-    let mainSize0: number = null
-
-    const onDragStart: DragEventHandler = (event) => {
-        x0 = event.screenX
-        y0 = event.screenY
-        mainSize0 = mainSize
+    
+    const dragOpen: MouseEventHandler = (event) => {
+        setDrag({
+            x0: event.pageX,
+            y0: event.pageY,
+            mainSize0: mainSize,
+            moving: true,
+        })
     }
 
-    const onDrag: DragEventHandler = (event) => {
-        // TODO update the size here for a better UX        
-    }
+    const dragMove: MouseEventHandler = (event) => {
+        if (drag.moving) {
+            let diffX = (drag.x0 - event.pageX)
+            let diffY = (drag.y0 - event.pageY)
 
-
-    const onDragEnd: DragEventHandler = (event) => {
-        if (x0 !== null && y0 != null) {
-            let diffX = (x0 - event.screenX)
-            let diffY = (y0 - event.screenY)
-            
             if (!startSized) {
                 diffX *= -1
                 diffY *= -1
             }
 
+            let newMainSize: number
+
             if (props.dir === 'h') {
-                setMainSize(mainSize0 - diffY)
+                newMainSize = drag.mainSize0 - diffY
             }
             else {
-                setMainSize(mainSize0 - diffX)
+                newMainSize = drag.mainSize0 - diffX
             }
+
+            if (newMainSize < barSize) { newMainSize = barSize }
+
+            setMainSize(newMainSize)
         }
+    }
+
+
+    const dragClose: MouseEventHandler = (e) => {
+        setDrag({})
     }
 
     const dirClass = `split-dir-${props.dir || 'v'}`
@@ -103,21 +112,14 @@ export const Split = (props: SplitProperties) => {
     }
 
     return (
-        <>
-            <div className={`${props.className} ${dirClass} split-start`}
-                    style={startStyles}>
+        <div onMouseMove={dragMove} onMouseUp={dragClose} onMouseLeave={dragClose}>
+            <div className={classNames(props.className, dirClass, 'split-start')} style={startStyles}>
                 {props.start}
             </div>
-            <div className={`${props.className} ${dirClass} split-bar`}
-                    draggable="true"
-                    style={barStyles} 
-                    onDragStart={onDragStart} 
-                    onDrag={onDrag} 
-                    onDragEnd={onDragEnd} />
-            <div className={`${props.className} ${dirClass} split-end`}
-                    style={endStyles}>
+            <div className={classNames(props.className, dirClass, 'split-bar')} style={barStyles} onMouseDown={dragOpen} />
+            <div className={classNames(props.className, dirClass, 'split-end')} style={endStyles}>
                 {props.end}
             </div>
-        </>
+        </div>
     )
 }

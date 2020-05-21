@@ -66,6 +66,8 @@ body {
 
 .split-bar {
     background-color: black;
+    user-select: none;
+
     &.split-dir-v {
         cursor: col-resize;
     }

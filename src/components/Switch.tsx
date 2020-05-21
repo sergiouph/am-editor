@@ -16,7 +16,7 @@ export const Switch = (props: SwitchProps) => {
         }
     }
     return (
-        <span className={classNames(props.className, 'switch', props.selected ? 'selected' : null)} onClick={onClick} title={props.help}>
+        <span className={classNames(props.className, 'switch', props.selected ? 'selected' : null)} onClick={onClick} title={props.help} tabIndex='0'>
             <span className='label'>{props.label}</span>
         </span>
     )

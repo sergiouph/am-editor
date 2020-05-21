@@ -23,7 +23,7 @@ export const OptionGroup = (props: OptionGroupProps) => {
             }
         }
         return (
-            <span key={index} className={classNames('item', isSelected ? 'selected' : null)} onClick={onClick} title={option.help}>
+            <span key={index} className={classNames('item', isSelected ? 'selected' : null)} onClick={onClick} title={option.help} tabIndex='0'>
                 <span className="label">{option.label || option.value}</span>
             </span>
         )

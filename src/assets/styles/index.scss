@@ -122,6 +122,33 @@ body {
     }
 }
 
+// Tool-Item / Button
+.tool-bar .tool-item .button {
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+
+    border: none;
+    background-color: black;
+    color: white;
+
+    font-family: sans-serif;
+    font-size: 16px;
+
+    &:hover {
+        background-color: #555;
+    }
+
+    &.selected {
+        background-color: #333;
+        font-weight: bold;
+    }
+}
+
 .app-title {
     font-size: 24px;
     letter-spacing: 2px;

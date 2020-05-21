@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
+import { downloadDiagram } from '../lib/diagram-renderer'
 import { Diagram } from './Diagram'
 import { Split } from './Split'
 import { CodeEditor } from './CodeEditor'
@@ -7,6 +8,8 @@ import { Menu } from './Menu'
 import { ToolBar, ToolItem } from './ToolBar'
 import { OptionGroup } from './OptionGroup'
 import { Switch } from './Switch'
+import { Button } from './Button'
+import { useAsync } from '../lib/tools'
 
 
 export const App = ({ input0, dir0 }) => {
@@ -28,6 +31,10 @@ export const App = ({ input0, dir0 }) => {
         setMenuVisible(value)
     }
 
+    function onDownload() {
+        downloadDiagram(input, dir).then(() => console.log('ok')).then(console.error)
+    }
+
     const toolbar = (
         <ToolBar>
             <ToolItem>
@@ -38,6 +45,9 @@ export const App = ({ input0, dir0 }) => {
                     {value: 'LR', help: 'Left-Right Direction'},
                     {value: 'TB', help: 'Top-Bottom Direction'},
                 ]} />
+            </ToolItem>
+            <ToolItem>
+                <Button onClick={onDownload} label="DOWNLOAD" help='Download diagram as an image'/>
             </ToolItem>
             <ToolItem  expand={true} />
             <ToolItem>

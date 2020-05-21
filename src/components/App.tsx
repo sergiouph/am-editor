@@ -4,35 +4,46 @@ import { Diagram } from './Diagram'
 import { Split } from './Split'
 import { CodeEditor } from './CodeEditor'
 import { Menu } from './Menu'
+import { ToolBar, ToolItem } from './ToolBar'
+import { OptionGroup } from './OptionGroup'
+import { Switch } from './Switch'
+
 
 export const App = ({ input0, dir0 }) => {
     const [input, setInput] = useState(input0)
     const [dir, setDir] = useState(dir0)
-    const [menuHidden, setMenuHidden] = useState(true)
+    const [menuVisible, setMenuVisible] = useState(false)
     
     function onChangeInput(e) {
         console.log(e)
         setInput(e.target.value)
     }
 
-    function onChangeDir(e) {
-        console.log(e)
-        setDir(e.target.value)
+    function onChangeDir(value) {
+        setDir(value)
     }
 
-    function onClickMenu(e) {
-        setMenuHidden(!menuHidden)
+    function onChangeMenu(value) {
+        console.log(value)
+        setMenuVisible(value)
     }
 
     const toolbar = (
-        <>
-            <button onClick={onClickMenu}>Info</button>
-            <label>Direction</label>
-            <select value={dir} onChange={onChangeDir}>
-                <option value="LR">Left-Right</option>
-                <option value="TB">Top-Bottom</option>
-            </select>
-        </>
+        <ToolBar>
+            <ToolItem>
+                <div className='app-title'>Automata Editor</div>
+            </ToolItem>
+            <ToolItem>
+                <OptionGroup onChange={onChangeDir} value={dir} options={[
+                    {value: 'LR', help: 'Left-Right Direction'},
+                    {value: 'TB', help: 'Top-Bottom Direction'},
+                ]} />
+            </ToolItem>
+            <ToolItem  expand={true} />
+            <ToolItem>
+                <Switch selected={menuVisible} onChange={onChangeMenu} label='INFO' help='Show/hide application information' />
+            </ToolItem>
+        </ToolBar>
     )
     const menu = (
         <Menu />
@@ -45,7 +56,7 @@ export const App = ({ input0, dir0 }) => {
     )
     
     return (
-        <Split className='menu-panel' dir='v' endSize={300} end={menu} endHidden={menuHidden} start={
+        <Split className='menu-panel' dir='v' endSize={300} end={menu} endHidden={!menuVisible} start={
             <Split className='root-panel' dir='h' startSize={50} start={toolbar} end={
                 <Split className='diagram-panel' dir='v' startSize={300} start={codeEditor} end={diagram} />
             } />

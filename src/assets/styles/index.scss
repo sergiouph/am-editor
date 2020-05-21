@@ -9,17 +9,24 @@ body {
 }
 
 // Toolbar
-.root-panel.split-start {
+.tool-bar {
+    height: 100%;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: flex-start;
-    align-items: center;
+    align-items: stretch;
     align-content: center;
-    padding-inline-start: 10px;
+    background-color: black;
+    color: white;
 
-    > * {
-        margin-inline-end: 10px;
+    .tool-item {
+        box-sizing: border-box;
+        height: 100%;
+    
+        &.expand {
+            flex-grow: 1;
+        }
     }
 }
 
@@ -65,4 +72,62 @@ body {
     &.split-dir-h {
         cursor: row-resize;
     }
+}
+
+// Tool-Item / Option-Group
+.tool-bar .tool-item .option-group {
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    
+    .item {
+        display: flex;
+        flex-wrap: nowrap;
+        align-items: center;
+        padding: 10px;
+        cursor: pointer;
+        
+        &:hover {
+            background-color: #555;
+        }
+
+        &.selected {
+            background-color: #333;
+            font-weight: bold;
+        }
+    }
+}
+
+// Tool-Item / Switch
+.tool-bar .tool-item .switch {
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #555;
+    }
+
+    &.selected {
+        background-color: #333;
+        font-weight: bold;
+    }
+}
+
+.app-title {
+    font-size: 24px;
+    letter-spacing: 2px;
+    box-sizing: border-box;
+    height: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    padding: 10px;
+    cursor: default;
 }

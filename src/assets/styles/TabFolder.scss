@@ -1,0 +1,41 @@
+.tab-folder {
+    border: 1px solid black;
+    .tab-button-group {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        align-items: stretch;
+
+        background-color: black;
+        color: white;
+
+        .tab-button {
+            box-sizing: border-box;
+            padding: 10px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #333;
+            }
+
+            &.active {
+                background-color: #555;
+            }
+        }
+    }
+    .tab-item-group {
+        position: relative;
+        
+        .tab-item {
+            box-sizing: border-box;
+            padding: 10px;
+            position: absolute;
+            visibility: hidden;
+
+            &.active {
+                visibility: visible;
+            }
+        }
+    }
+}

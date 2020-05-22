@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useAsync } from '../lib/tools'
 import { generateSvgElement } from '../lib/diagram-renderer'
-
+import { Showcase } from './Showcase'
 
 export const Diagram = ({ input, dir }) => {
     const svgRef = useRef(null);
@@ -26,5 +26,5 @@ export const Diagram = ({ input, dir }) => {
             svgRef.current.appendChild(document.createTextNode(String(e)))
         }
     });
-    return (<div ref={svgRef} />)
+    return (<Showcase className="diagram-container"><div ref={svgRef} /></Showcase>)
 }

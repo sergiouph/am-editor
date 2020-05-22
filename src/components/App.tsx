@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { downloadDiagram } from '../lib/diagram-renderer'
+import { downloadSvg } from '../lib/svg-downloader'
 import { Diagram } from './Diagram'
 import { Split } from './Split'
 import { CodeEditor } from './CodeEditor'
@@ -32,7 +32,7 @@ export const App = ({ input0, dir0 }) => {
     }
 
     function onDownload() {
-        downloadDiagram(input, dir).then(() => console.log('ok')).then(console.error)
+        downloadSvg(document.querySelector('.diagram-container svg'), 'diagram')
     }
 
     const toolbar = (
@@ -46,10 +46,10 @@ export const App = ({ input0, dir0 }) => {
                     {value: 'TB', help: 'Top-Bottom Direction'},
                 ]} />
             </ToolItem>
+            <ToolItem  expand={true} />
             <ToolItem>
                 <Button onClick={onDownload} label="DOWNLOAD" help='Download diagram as an image'/>
             </ToolItem>
-            <ToolItem  expand={true} />
             <ToolItem>
                 <Switch selected={menuVisible} onChange={onChangeMenu} label='INFO' help='Show/hide application information' />
             </ToolItem>
@@ -66,7 +66,7 @@ export const App = ({ input0, dir0 }) => {
     )
     
     return (
-        <Split className='menu-panel' dir='v' endSize={300} end={menu} endHidden={!menuVisible} start={
+        <Split className='menu-panel' dir='v' endSize={500} end={menu} endHidden={!menuVisible} start={
             <Split className='root-panel' dir='h' startSize={50} start={toolbar} end={
                 <Split className='diagram-panel' dir='v' startSize={300} start={codeEditor} end={diagram} />
             } />

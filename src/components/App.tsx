@@ -17,6 +17,12 @@ export const App = ({ input0, dir0 }) => {
     const [dir, setDir] = useState(dir0)
     const [menuVisible, setMenuVisible] = useState(false)
     
+    let machine = null
+
+    function setMachine(m) {
+        machine = m
+    }
+
     function onChangeInput(e) {
         console.log(e)
         setInput(e.target.value)
@@ -32,7 +38,9 @@ export const App = ({ input0, dir0 }) => {
     }
 
     function onDownload() {
-        downloadSvg(document.querySelector('.diagram-container svg'), 'diagram')
+        if (machine != null) {
+            downloadSvg(document.querySelector('.diagram-container svg'), machine.title || 'diagram')
+        }
     }
 
     const toolbar = (
@@ -46,7 +54,7 @@ export const App = ({ input0, dir0 }) => {
                     {value: 'TB', help: 'Top-Bottom Direction'},
                 ]} />
             </ToolItem>
-            <ToolItem  expand={true} />
+            <ToolItem expand={true} />
             <ToolItem>
                 <Button onClick={onDownload} label="DOWNLOAD" help='Download diagram as an image'/>
             </ToolItem>
@@ -62,7 +70,7 @@ export const App = ({ input0, dir0 }) => {
         <CodeEditor value={input} onChange={onChangeInput} />
     )
     const diagram = (
-        <Diagram input={input} dir={dir} />
+        <Diagram input={input} dir={dir} machineSetter={setMachine} />
     )
     
     return (

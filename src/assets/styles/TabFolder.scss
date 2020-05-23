@@ -1,5 +1,4 @@
 .tab-folder {
-    border: 1px solid black;
     .tab-button-group {
         display: flex;
         flex-direction: row;
@@ -25,16 +24,13 @@
         }
     }
     .tab-item-group {
-        position: relative;
-        
         .tab-item {
             box-sizing: border-box;
             padding: 10px;
-            position: absolute;
-            visibility: hidden;
+            display: none;
 
             &.active {
-                visibility: visible;
+                display: block;
             }
         }
     }

@@ -2,13 +2,25 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useAsync } from '../lib/tools'
 import { generateSvgElement } from '../lib/diagram-renderer'
 import { Showcase } from './Showcase'
+import { Machine } from '../lib/machine-engine'
+import { parseMachine } from '../lib/parsing/index'
 
-export const Diagram = ({ input, dir }) => {
+interface DiagramPorps {
+    input: string
+    dir: string
+    machineSetter: (machine: Machine) => void
+}
+
+export const Diagram = ({ input, dir, machineSetter }) => {
     const svgRef = useRef(null);
     const [error, setError] = useState(null)
     useAsync(async () => {
         try {
-            const svg = await generateSvgElement(input, dir)
+            const machine = parseMachine(input)
+
+            machineSetter(machine)
+
+            const svg = await generateSvgElement(machine, dir)
             if(svgRef.current && svg){
                 while (svgRef.current.firstChild) {
                     svgRef.current.removeChild(svgRef.current.lastChild);
@@ -20,6 +32,7 @@ export const Diagram = ({ input, dir }) => {
             } 
         }
         catch (e) {
+            console.error(e)
             while (svgRef.current.firstChild) {
                 svgRef.current.removeChild(svgRef.current.lastChild);
             }

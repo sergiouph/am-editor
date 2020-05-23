@@ -91,6 +91,7 @@ class Edge {
 class Graph {
     type: string
     name: string
+    title: string
     rankdir: string
     forcelabels: boolean
     nodes: Node[]
@@ -111,6 +112,10 @@ class Graph {
         output.push('graph [fontname = "sans-serif"];\n')
         output.push('node [fontname = "sans-serif"];\n')
         output.push('edge [fontname = "sans-serif"];\n')
+
+        if (this.title) {
+            output.push('label=', dotStringify(this.title), ';\n')
+        }
 
         if (this.rankdir) {
             output.push('rankdir=', dotStringify(this.rankdir), ';\n')
@@ -165,33 +170,34 @@ export function generateVizCode(machine: Machine, dir: string): string {
     const tails = {}
 
     graph.rankdir = dir
+    graph.title = machine.title
 
     for (const state of machine.states) {
         let head = null
         let tail = null
         const node = graph.createNode('STATE')
-        node.label = state.name
+        node.label = state.label || state.name
         node.shape = (state.accepted ? 'doublecircle' : 'circle')
 
         let firstName: string = null
         let lastNode: Node = null
 
-        for (const note of state.notes) {
-            const noteNode = graph.createNode('ACTION')
-            noteNode.label = note
-            noteNode.shape = 'parallelogram'
+        for (const action of state.actions) {
+            const actionNode = graph.createNode('ACTION')
+            actionNode.label = action
+            actionNode.shape = 'box'
 
             if (firstName === null) {
-                firstName = noteNode.name
+                firstName = actionNode.name
             })
 
             if (lastNode !== null) {
-                const noteEdge = new Edge(lastNode.name, noteNode.name)
+                const actionEdge = new Edge(lastNode.name, actionNode.name)
 
-                graph.edges.push(noteEdge)
+                graph.edges.push(actionEdge)
             }
 
-            lastNode = noteNode
+            lastNode = actionNode
         }
 
         if (lastNode != null) {
@@ -225,21 +231,21 @@ export function generateVizCode(machine: Machine, dir: string): string {
             symbol = [...transition.symbols].join(', ')
         }
 
-        for (const note of transition.notes) {
-            const noteNode = graph.createNode('ACTION')
-            noteNode.label = note
-            noteNode.shape = 'parallelogram'
+        for (const action of transition.actions) {
+            const actionNode = graph.createNode('ACTION')
+            actionNode.label = action
+            actionNode.shape = 'box'
 
-            const noteEdge = new Edge(source, noteNode.name)
+            const actionEdge = new Edge(source, actionNode.name)
 
             if (symbol !== null) {
-                noteEdge.label = symbol
+                actionEdge.label = symbol
                 symbol = null
             }
 
-            graph.edges.push(noteEdge)
+            graph.edges.push(actionEdge)
 
-            source = noteNode.name
+            source = actionNode.name
         }
 
         const target = heads[transition.target.name]

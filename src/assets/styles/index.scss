@@ -167,9 +167,42 @@ body {
     cursor: default;
 }
 
+.menu-panel.split-end {
+    overflow-y: scroll;
+
+    .tab-button-group {
+        position: sticky;
+        top: 0;
+    }
+}
 
 svg {
     text {
         user-select: none;
+    }
+}
+
+.syntax, .about {
+    h1, h2, h3, h4, h5, h6 { margin: 0 0 1em 0; }
+    h1, h2, h3, h4, h5, h6 { font-size: 20px; }
+
+    pre {
+        border-radius: 5px;
+        border-width: 1px;
+        border-style: solid;
+        border-color: #ebeafa;
+        background-color: #fdfcfe;
+        font-size: 14px;
+        padding: 10px;
+        font-family: 'Anonymous Pro', monospace;
+    }
+    code {
+        border-radius: 5px;
+        border-width: 1px;
+        border-style: solid;
+        border-color: #ebeafa;
+        background-color: #fdfcfe;
+        padding: 1px;
+        font-family: 'Anonymous Pro', monospace;
     }
 }

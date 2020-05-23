@@ -34,7 +34,7 @@ export const TabFolder = (props: TabFolderProps) => {
     })
     const items = props.children.map((child) => {
         return (
-            <div className={classNames(props.className, 'tab-item', active === child.props.value ? 'active' : '')}>
+            <div key={child.props.value} className={classNames(props.className, 'tab-item', active === child.props.value ? 'active' : '')}>
                 {child}
             </div>
         )

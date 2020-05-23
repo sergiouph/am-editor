@@ -1,14 +1,15 @@
 export class State {
     name: string
+    label: string
     accepted: boolean
     initial: boolean
-    notes: string[]
+    actions: string[]
 
     constructor(name: string) {
         this.name = name
         this.accepted = false
         this.initial = false
-        this.notes = []
+        this.actions = []
     }
 }
 
@@ -16,17 +17,26 @@ export class Transition {
     source: State
     target: State
     symbols: string[]
-    notes: string[]
+    actions: string[]
 
     constructor(source: State, target: State) {
         this.source = source
         this.target = target
         this.symbols = []
-        this.notes = []
+        this.actions = []
     }
 }
 
+export interface StateData {
+    name: string
+    label?: string
+    initial?: boolean
+    accepted?: boolean
+    action?: string
+}
+
 export class Machine {
+    title?: string
     states: State[]
     transitions: Transition[]
 
@@ -35,37 +45,42 @@ export class Machine {
         this.transitions = []
     }
 
-    state(name: string, initial: boolean = false, accepted: boolean = false, note: string = null ): State {
+    state(data: StateData): State {
         let result = null
         
         for (const state of this.states) {
-            if (state.name === name) {
+            if (state.name === data.name) {
                 result = state
                 break
             }
         }
     
         if (result === null) {
-            result = new State(name)
+            result = new State(data.name)
             this.states.push(result)
         }
+
+        if (data.label) {
+            // check for overrides
+            result.label = data.label
+        }
     
-        if (initial === true) {
+        if (data.initial === true) {
             result.initial = true
         }
     
-        if (accepted === true) {
+        if (data.accepted === true) {
             result.accepted = true
         }
     
-        if (note) {
-            result.notes.push(note)
+        if (data.action) {
+            result.actions.push(data.action)
         }
         
         return result;
     }
 
-    transition(source: State, target: State, symbol: string = null, note: string = null): Transition {
+    transition(source: State, target: State, symbol: string = null, action: string = null): Transition {
         if (!source || !target) {
             throw new Error('Expected source and target.')
         }
@@ -88,8 +103,8 @@ export class Machine {
             result.symbols.push(symbol)
         }
 
-        if (note) {
-            result.notes.push(note)
+        if (action) {
+            result.actions.push(action)
         }
         
         return result

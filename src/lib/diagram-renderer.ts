@@ -2,11 +2,10 @@ import Viz from 'viz.js'
 import { Module, render } from 'viz.js/full.render'
 
 import { generateVizCode } from '../lib/machine-formatter'
-import { parseMachine } from '../lib/machine-parser'
+import { Machine } from './machine-engine'
 
 
-export async function generateSvgElement(input: string, dir: string) {
-    const machine = parseMachine(input)
+export async function generateSvgElement(machine: Machine, dir: string) {
     const code = generateVizCode(machine, dir)
     const viz = new Viz({ Module, render })
 

@@ -4,14 +4,15 @@ import { generateSvgElement } from '../lib/diagram-renderer'
 import { Showcase } from './Showcase'
 import { Machine } from '../lib/machine-engine'
 import { parseMachine } from '../lib/parsing/index'
+import { RenderOptions } from '../lib/machine-formatter'
 
 interface DiagramPorps {
     input: string
-    dir: string
+    options: RenderOptions
     machineSetter: (machine: Machine) => void
 }
 
-export const Diagram = ({ input, dir, machineSetter }) => {
+export const Diagram = ({ input, options, machineSetter }) => {
     const svgRef = useRef(null);
     const [error, setError] = useState(null)
     useAsync(async () => {
@@ -20,14 +21,14 @@ export const Diagram = ({ input, dir, machineSetter }) => {
 
             machineSetter(machine)
 
-            const svg = await generateSvgElement(machine, dir)
+            const svg = await generateSvgElement(machine, options)
             if(svgRef.current && svg){
                 while (svgRef.current.firstChild) {
                     svgRef.current.removeChild(svgRef.current.lastChild);
                 }
                 svgRef.current.appendChild(svg)
     
-                const url = `?dir=${encodeURIComponent(dir)}&input=${encodeURIComponent(btoa(input))}`
+                const url = `?dir=${encodeURIComponent(options.dir)}&input=${encodeURIComponent(btoa(input))}`
                 window.history.pushState({}, window.document.title, url)
             } 
         }

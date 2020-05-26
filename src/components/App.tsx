@@ -10,11 +10,12 @@ import { OptionGroup } from './OptionGroup'
 import { Switch } from './Switch'
 import { Button } from './Button'
 import { useAsync } from '../lib/tools'
+import { RenderOptions } from '../lib/machine-formatter'
 
 
 export const App = ({ input0, dir0 }) => {
     const [input, setInput] = useState(input0)
-    const [dir, setDir] = useState(dir0)
+    const [options, setOptions] = useState(new RenderOptions())
     const [menuVisible, setMenuVisible] = useState(false)
     
     let machine = null
@@ -29,7 +30,7 @@ export const App = ({ input0, dir0 }) => {
     }
 
     function onChangeDir(value) {
-        setDir(value)
+        setOptions(options.patch({ dir: value }))
     }
 
     function onChangeMenu(value) {
@@ -49,7 +50,7 @@ export const App = ({ input0, dir0 }) => {
                 <div className='app-title'>Automata Editor</div>
             </ToolItem>
             <ToolItem>
-                <OptionGroup onChange={onChangeDir} value={dir} options={[
+                <OptionGroup onChange={onChangeDir} value={options.dir} options={[
                     {value: 'LR', help: 'Left-Right Direction'},
                     {value: 'TB', help: 'Top-Bottom Direction'},
                 ]} />
@@ -64,13 +65,13 @@ export const App = ({ input0, dir0 }) => {
         </ToolBar>
     )
     const menu = (
-        <Menu />
+        <Menu options={options} setter={setOptions} />
     )
     const codeEditor = (
         <CodeEditor value={input} onChange={onChangeInput} />
     )
     const diagram = (
-        <Diagram input={input} dir={dir} machineSetter={setMachine} />
+        <Diagram input={input} options={options} machineSetter={setMachine} />
     )
     
     return (

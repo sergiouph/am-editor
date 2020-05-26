@@ -164,12 +164,33 @@ class Graph {
     }
 }
 
-export function generateVizCode(machine: Machine, dir: string): string {
+export class RenderOptions {
+
+    dir: string
+    ignoreActions: boolean
+
+    constructor() {
+        this.dir = 'LR'
+        this.ignoreActions = false
+    }
+
+    patch({ dir = null, ignoreActions = null }): RenderOptions {
+        const o = new RenderOptions()
+
+        o.dir = dir ?? this.dir
+        o.ignoreActions = ignoreActions ?? this.ignoreActions
+
+        return o
+    }
+
+}
+
+export function generateVizCode(machine: Machine, options: RenderOptions): string {
     const graph = new Graph()
     const heads = {}
     const tails = {}
 
-    graph.rankdir = dir
+    graph.rankdir = options.dir
     graph.title = machine.title
 
     for (const state of machine.states) {
@@ -182,22 +203,24 @@ export function generateVizCode(machine: Machine, dir: string): string {
         let firstName: string = null
         let lastNode: Node = null
 
-        for (const action of state.actions) {
-            const actionNode = graph.createNode('ACTION')
-            actionNode.label = action
-            actionNode.shape = 'box'
+        if (!options.ignoreActions) {
+            for (const action of state.actions) {
+                const actionNode = graph.createNode('ACTION')
+                actionNode.label = action
+                actionNode.shape = 'box'
 
-            if (firstName === null) {
-                firstName = actionNode.name
-            })
+                if (firstName === null) {
+                    firstName = actionNode.name
+                })
 
-            if (lastNode !== null) {
-                const actionEdge = new Edge(lastNode.name, actionNode.name)
+                if (lastNode !== null) {
+                    const actionEdge = new Edge(lastNode.name, actionNode.name)
 
-                graph.edges.push(actionEdge)
+                    graph.edges.push(actionEdge)
+                }
+
+                lastNode = actionNode
             }
-
-            lastNode = actionNode
         }
 
         if (lastNode != null) {
@@ -231,21 +254,23 @@ export function generateVizCode(machine: Machine, dir: string): string {
             symbol = [...transition.symbols].join(', ')
         }
 
-        for (const action of transition.actions) {
-            const actionNode = graph.createNode('ACTION')
-            actionNode.label = action
-            actionNode.shape = 'box'
+        if (!options.ignoreActions) {
+            for (const action of transition.actions) {
+                const actionNode = graph.createNode('ACTION')
+                actionNode.label = action
+                actionNode.shape = 'box'
 
-            const actionEdge = new Edge(source, actionNode.name)
+                const actionEdge = new Edge(source, actionNode.name)
 
-            if (symbol !== null) {
-                actionEdge.label = symbol
-                symbol = null
+                if (symbol !== null) {
+                    actionEdge.label = symbol
+                    symbol = null
+                }
+
+                graph.edges.push(actionEdge)
+
+                source = actionNode.name
             }
-
-            graph.edges.push(actionEdge)
-
-            source = actionNode.name
         }
 
         const target = heads[transition.target.name]

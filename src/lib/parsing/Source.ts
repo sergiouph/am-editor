@@ -2,6 +2,8 @@ const nameFirstChar = /[0-9a-zA-Z_]/
 const nameOtherChar = /[0-9a-zA-Z_-]/ 
 
 
+const SPECIAL_MARKS = ['\\', '!', ':', ',']
+
 export class Location {
     line: number
     column: number
@@ -111,7 +113,7 @@ export class Source {
 
             if (escaped) {
                 escaped = false
-                if (!stopMarks.includes(char) && char !== '\\') {
+                if (!stopMarks.includes(char) && !SPECIAL_MARKS.includes(char)) {
                     throw this.error(`Invalid escaped char: ${JSON.stringify(char)}`)
                 }
 

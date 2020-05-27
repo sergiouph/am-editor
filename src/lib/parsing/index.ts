@@ -72,6 +72,7 @@ function parseStates(ctx: Context): boolean {
             ctx.source.skipSpaces()
         }
         else if (ctx.source.pullToken('=>')) {
+            initial = true
             accepted = true
 
             ctx.source.skipSpaces()
@@ -162,9 +163,23 @@ function parseStates(ctx: Context): boolean {
                 symbols.push(null)
             }
 
-            const actions: string[] = []
+            const beforeActions: string[] = []
+            const afterActions: string[] = []
             
             if (ctx.source.pullToken('!')) {
+                let beforeActionMode = false
+                let afterActionMode = false
+
+                if (ctx.source.pullToken('>')) {
+                    afterActionMode = true
+                }
+                else if (ctx.source.pullToken('<')) {
+                    beforeActionMode = true
+                }
+                else {
+                    beforeActionMode = true
+                }
+
                 ctx.source.skipSpaces()
                 while(true) {
                     const action = ctx.source.pullText([',', '\n'])
@@ -172,7 +187,12 @@ function parseStates(ctx: Context): boolean {
                         throw ctx.source.error('Expected transition action.')
                     }
 
-                    actions.push(action)
+                    if (beforeActionMode) {
+                        beforeActions.push(action)
+                    }
+                    else if (afterActionMode) {
+                        afterActions.push(action)
+                    }
 
                     ctx.source.skipSpaces()
                     if (ctx.source.pullToken(',')) {
@@ -183,9 +203,6 @@ function parseStates(ctx: Context): boolean {
                     }
                 }
             }
-            else {
-                actions.push(null)
-            }
 
             const mSources = sources.map(s => ctx.machine.state(s))
             const mTargets = targets.map(s => ctx.machine.state(s))
@@ -193,8 +210,14 @@ function parseStates(ctx: Context): boolean {
             for (const mSource of mSources) {
                 for (const mTarget of mTargets) {
                     for (const symbol of symbols) {
-                        for (const action of actions) {
-                            ctx.machine.transition(mSource, mTarget, symbol, action)
+                        ctx.machine.transition(mSource, mTarget, symbol, null, null)
+                        
+                        for (const action of beforeActions) {
+                            ctx.machine.transition(mSource, mTarget, symbol, action, null)
+                        }
+
+                        for (const action of afterActions) {
+                            ctx.machine.transition(mSource, mTarget, symbol, null, action)
                         }
                     }
                 }
@@ -212,40 +235,16 @@ function parseStates(ctx: Context): boolean {
                     throw ctx.source.error('Expected state label.')
                 }
             }
-
-            const actions: string[] = []
-            
-            if (ctx.source.pullToken('!')) {
-                ctx.source.skipSpaces()
-                while(true) {
-                    const action = ctx.source.pullText([',', '\n'])
-                    if (action === null) {
-                        throw ctx.source.error('Expected transition action.')
-                    }
-
-                    actions.push(action)
-
-                    ctx.source.skipSpaces()
-                    if (ctx.source.pullToken(',')) {
-                        ctx.source.skipLines()
-                    }
-                    else {
-                        break
-                    }
-                }
-            }
-            else {
-                actions.push(null)
+    
+            if (ctx.source.pullToken('<=')) {
+                accepted = true
             }
 
             for (const state of sources) {
                 state.label = label
+                state.accepted = accepted
                 
-                for (const action of actions) {
-                    state.action = action
-                    
-                    ctx.machine.state(state)
-                }
+                ctx.machine.state(state)
             }
         }
 

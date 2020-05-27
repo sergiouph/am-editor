@@ -1,12 +1,13 @@
 export class State {
     name: string
-    label: string
+    label?: string
     accepted: boolean
     initial: boolean
     actions: string[]
 
     constructor(name: string) {
         this.name = name
+        this.label = null
         this.accepted = false
         this.initial = false
         this.actions = []
@@ -17,13 +18,15 @@ export class Transition {
     source: State
     target: State
     symbols: string[]
-    actions: string[]
+    beforeActions: string[]
+    afterActions: string[]
 
     constructor(source: State, target: State) {
         this.source = source
         this.target = target
         this.symbols = []
-        this.actions = []
+        this.beforeActions = []
+        this.afterActions = []
     }
 }
 
@@ -42,6 +45,7 @@ export class Machine {
 
     constructor() {
         this.states = []
+        this.title = null
         this.transitions = []
     }
 
@@ -61,7 +65,7 @@ export class Machine {
         }
 
         if (data.label) {
-            // check for overrides
+            // TODO check for overrides
             result.label = data.label
         }
     
@@ -80,7 +84,7 @@ export class Machine {
         return result;
     }
 
-    transition(source: State, target: State, symbol: string = null, action: string = null): Transition {
+    transition(source: State, target: State, symbol: string = null, beforeAction: string = null, afterAction: string = null): Transition {
         if (!source || !target) {
             throw new Error('Expected source and target.')
         }
@@ -103,8 +107,12 @@ export class Machine {
             result.symbols.push(symbol)
         }
 
-        if (action) {
-            result.actions.push(action)
+        if (beforeAction) {
+            result.beforeActions.push(beforeAction)
+        }
+
+        if (afterAction) {
+            result.afterActions.push(afterAction)
         }
         
         return result

@@ -46,10 +46,16 @@ export const Syntax = () => {
         -> states
       </pre>
       <p>
-        And for accepted states use:
+        For initial and accepted states use:
       </p>
       <pre className='code-sample'>
         => states
+      </pre>
+      <p>
+        Only for accepted states use:
+      </p>
+      <pre className='code-sample'>
+        states &lt;=
       </pre>
       <p>
         The text used to represent the state in the diagram can be changed by
@@ -81,16 +87,17 @@ export const Syntax = () => {
         triggered actions when transitioning between states.
       </p>
       <p>
-        Both transition and state declarations support actions by appending
-        the action after the declaration using this syntax:
+        Transitions declarations support actions by appending this syntax:
       </p>
       <pre className='code-sample'>
         source -> target ! action<br/>
-        states ! action
+        source -> target !&lt; action<br/>
+        source -> target !&gt; action<br/>
       </pre>
       <p>
-        Actions in states are rendered <em>before</em> reaching the state and
-        actions in transitions <em>after</em> the symbol is consumed.
+        The <code>!</code> and <code>!&lt;</code> actions are 
+        rendered <em>before</em> consuming the symbol 
+        and <code>!&gt;</code> <em>after</em> the symbol.
       </p>
 
       <h1>Directives</h1>

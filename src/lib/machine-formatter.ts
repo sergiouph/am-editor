@@ -85,7 +85,7 @@ export function generateVizCode(machine: Machine, options: RenderOptions): strin
             symbol = '\u03B5'  // epsilon lowercase
         }
         else {
-            symbol = [...transition.symbols].join(', ')
+            symbol = [...transition.symbols].join('\n')
         }
 
         if (options.ignoreActions || transition.afterActions.length == 0) {

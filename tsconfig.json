@@ -1,7 +1,15 @@
 {
+  "exclude": ["node_modules"],
+  "include": ["app"],
   "compilerOptions": {
     "jsx": "react",
+    "module": "ES6",
     "target": "ES5",
-    "lib": ["DOM"]
+    "lib": ["ESNext", "DOM"],
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "sourceMap": true,
+    "outDir": "./build"
   }
 }

@@ -2,24 +2,24 @@ import React, { ChangeEventHandler, useEffect, useState } from 'react'
 
 import { downloadSvg } from '../lib/svg-downloader'
 import { Diagram } from './Diagram'
-import { Split } from './Split'
+import { SplitPanel } from '../components/SplitPanel'
 import { CodeEditor } from './CodeEditor'
-import { Menu } from './Menu'
-import { ToolBar, ToolItem } from './ToolBar'
-import { OptionGroup } from './OptionGroup'
-import { Switch } from './Switch'
-import { Button } from './Button'
+import { Menu } from '../components/Menu'
+import { ToolBar, ToolItem } from '../components/ToolBar'
+import { OptionGroup } from '../components/OptionGroup'
+import { Switch } from '../components/Switch'
+import { Button } from '../components/Button'
 import { useAsync } from '../lib/tools'
 import { RenderOptions } from '../lib/machine-formatter'
 import { Machine } from '../lib/machine-engine'
+import { getInitialAutomaton } from './lib/getInitialAutomaton'
+import { TabFolder, TabItem } from '../components/TabFolder'
+import { Syntax } from './Syntax'
+import { About } from './About'
+import { Options } from '../components/Options'
 
-interface AppProps {
-    input0: string
-    dir0: string
-}
-
-export const App = ({ input0, dir0 }: AppProps) => {
-    const [input, setInput] = useState(input0)
+export const App: React.FC = () => {
+    const [input, setInput] = useState(getInitialAutomaton())
     const [options, setOptions] = useState(new RenderOptions())
     const [menuVisible, setMenuVisible] = useState(false)
 
@@ -82,10 +82,19 @@ export const App = ({ input0, dir0 }: AppProps) => {
     )
 
     return (
-        <Split className='menu-panel' dir='v' endSize={500} end={menu} endHidden={!menuVisible} start={
-            <Split className='root-panel' dir='h' startSize={50} start={toolbar} end={
-                <Split className='diagram-panel' dir='v' startSize={300} start={codeEditor} end={diagram} />
-            } />
-        } />
+        <TabFolder className='main-screen'>
+            <TabItem value='Automata Editor'>
+                <SplitPanel className='editor-split' startSize={400} start={codeEditor} end={diagram} />
+            </TabItem>
+            <TabItem value='Syntax'>
+                <Syntax />
+            </TabItem>
+            <TabItem value='About'>
+                <About />
+            </TabItem>
+            <TabItem value='Options'>
+                <div>Settings!</div>
+            </TabItem>
+        </TabFolder>
     )
 }

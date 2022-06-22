@@ -1,5 +1,5 @@
 .tab-folder {
-    .tab-button-group {
+    .tab-head-group {
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
@@ -9,7 +9,7 @@
         background-color: black;
         color: white;
 
-        .tab-button {
+        .tab-head {
             box-sizing: border-box;
             padding: 10px;
             cursor: pointer;
@@ -23,10 +23,9 @@
             }
         }
     }
-    .tab-item-group {
-        .tab-item {
+    .tab-body-group {
+        .tab-body {
             box-sizing: border-box;
-            padding: 10px;
             display: none;
 
             &.active {

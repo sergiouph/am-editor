@@ -1,6 +1,6 @@
 {
   "exclude": ["node_modules"],
-  "include": ["app"],
+  "include": ["src"],
   "compilerOptions": {
     "jsx": "react",
     "module": "ES6",

@@ -1,5 +1,6 @@
 @use 'fonts';
 @use 'TabFolder';
+@use 'SplitPanel';
 
 body {
   margin: 0;
@@ -8,6 +9,53 @@ body {
   font-family: sans-serif;
   font-size: 16px;
 }
+
+html, body {
+    margin: 0px;
+    height: 100%;
+}
+
+.main-screen {
+    position: fixed;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    left: 0px;
+
+    .editor-split {
+        width: 100%;
+        height: 100%;
+
+        .code-editor {
+            width: 100%;
+            height: 100%;
+            padding: 10px;
+            font-family: 'Anonymous Pro', monospace;
+            font-size: 16px;
+            resize: none;
+            box-sizing: border-box;
+            border: none;
+            overflow: auto;
+
+            &:focus { outline: none; }
+        }
+
+        .diagram-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+            padding: 5px;
+            overflow: scroll;
+            cursor: grab;
+
+            &.dragging{
+                cursor: grabbing;
+            }
+        }
+    }
+}
+
 
 // Toolbar
 .tool-bar {
@@ -24,63 +72,14 @@ body {
     .tool-item {
         box-sizing: border-box;
         height: 100%;
-    
+
         &.expand {
             flex-grow: 1;
         }
     }
 }
 
-.diagram-panel.split-start {
-    // Code Editor
-    textarea.code-editor {
-        padding: 10px;
-        font-family: 'Anonymous Pro', monospace;
-        font-size: 16px;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        resize: none;
-        box-sizing: border-box;
-        border: none;
-        overflow: auto;
-    }
-}
 
-// Diagram display area
-.diagram-container.showcase {
-    box-sizing: border-box;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 5px;
-    overflow: scroll;
-    cursor: grab;
-
-    &.dragging{
-        cursor: grabbing;
-    }
-}
-
-.split-start, .split-end {
-    background-color: white;
-}
-
-.split-bar {
-    background-color: black;
-    user-select: none;
-
-    &.split-dir-v {
-        cursor: col-resize;
-    }
-    &.split-dir-h {
-        cursor: row-resize;
-    }
-}
 
 // Tool-Item / Option-Group
 .tool-bar .tool-item .option-group {
@@ -89,14 +88,14 @@ body {
     display: flex;
     flex-wrap: nowrap;
     align-items: stretch;
-    
+
     .item {
         display: flex;
         flex-wrap: nowrap;
         align-items: center;
         padding: 10px;
         cursor: pointer;
-        
+
         &:hover {
             background-color: #555;
         }

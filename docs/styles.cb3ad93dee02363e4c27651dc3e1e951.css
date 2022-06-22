@@ -1,0 +1,223 @@
+@import url("https://fonts.googleapis.com/css2?family=Anonymous+Pro&display=swap");
+.tab-folder .tab-head-group {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  background-color: black;
+  color: white;
+}
+.tab-folder .tab-head-group .tab-head {
+  box-sizing: border-box;
+  padding: 10px;
+  cursor: pointer;
+}
+.tab-folder .tab-head-group .tab-head:hover {
+  background-color: #333;
+}
+.tab-folder .tab-head-group .tab-head.active {
+  background-color: #555;
+}
+.tab-folder .tab-body-group .tab-body {
+  box-sizing: border-box;
+  display: none;
+}
+.tab-folder .tab-body-group .tab-body.active {
+  display: block;
+}
+
+.split-panel .split-start, .split-panel .split-end {
+  background-color: white;
+}
+.split-panel .split-bar {
+  background-color: black;
+  user-select: none;
+}
+.split-panel .split-bar.dir-v {
+  cursor: col-resize;
+}
+.split-panel .split-bar.dir-h {
+  cursor: row-resize;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  font-family: sans-serif;
+  font-size: 16px;
+}
+
+html, body {
+  margin: 0px;
+  height: 100%;
+}
+
+.main-screen {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+}
+.main-screen .editor-split {
+  width: 100%;
+  height: 100%;
+}
+.main-screen .editor-split .code-editor {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  font-family: "Anonymous Pro", monospace;
+  font-size: 16px;
+  resize: none;
+  box-sizing: border-box;
+  border: none;
+  overflow: auto;
+}
+.main-screen .editor-split .code-editor:focus {
+  outline: none;
+}
+.main-screen .editor-split .diagram-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  padding: 5px;
+  overflow: scroll;
+  cursor: grab;
+}
+.main-screen .editor-split .diagram-container.dragging {
+  cursor: grabbing;
+}
+
+.tool-bar {
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: stretch;
+  align-content: center;
+  background-color: black;
+  color: white;
+}
+.tool-bar .tool-item {
+  box-sizing: border-box;
+  height: 100%;
+}
+.tool-bar .tool-item.expand {
+  flex-grow: 1;
+}
+
+.tool-bar .tool-item .option-group {
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: stretch;
+}
+.tool-bar .tool-item .option-group .item {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}
+.tool-bar .tool-item .option-group .item:hover {
+  background-color: #555;
+}
+.tool-bar .tool-item .option-group .item.selected {
+  background-color: #333;
+  font-weight: bold;
+}
+
+.tool-bar .tool-item .switch {
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}
+.tool-bar .tool-item .switch:hover {
+  background-color: #555;
+}
+.tool-bar .tool-item .switch.selected {
+  background-color: #333;
+  font-weight: bold;
+}
+
+.tool-bar .tool-item .button {
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+  font-size: 16px;
+}
+.tool-bar .tool-item .button:hover {
+  background-color: #555;
+}
+.tool-bar .tool-item .button.selected {
+  background-color: #333;
+  font-weight: bold;
+}
+
+.app-title {
+  font-size: 24px;
+  letter-spacing: 2px;
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  padding: 10px;
+  cursor: default;
+}
+
+.menu-panel.split-end {
+  overflow-y: scroll;
+}
+.menu-panel.split-end .tab-button-group {
+  position: sticky;
+  top: 0;
+}
+
+svg text {
+  user-select: none;
+}
+
+.syntax h1, .syntax h2, .syntax h3, .syntax h4, .syntax h5, .syntax h6, .about h1, .about h2, .about h3, .about h4, .about h5, .about h6 {
+  margin: 0 0 1em 0;
+}
+.syntax h1, .syntax h2, .syntax h3, .syntax h4, .syntax h5, .syntax h6, .about h1, .about h2, .about h3, .about h4, .about h5, .about h6 {
+  font-size: 20px;
+}
+.syntax pre, .about pre {
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ebeafa;
+  background-color: #fdfcfe;
+  font-size: 14px;
+  padding: 10px;
+  font-family: "Anonymous Pro", monospace;
+}
+.syntax code, .about code {
+  border-radius: 5px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #ebeafa;
+  background-color: #fdfcfe;
+  padding: 1px;
+  font-family: "Anonymous Pro", monospace;
+}

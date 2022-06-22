@@ -1,8 +1,8 @@
 import React from 'react'
 import { RenderOptions } from '../lib/machine-formatter'
-import { About } from './About'
+import { About } from '../app/About'
 import { Options } from './Options'
-import { Syntax } from './Syntax'
+import { Syntax } from '../app/Syntax'
 import { TabFolder, TabItem } from './TabFolder'
 
 interface MenuProps {

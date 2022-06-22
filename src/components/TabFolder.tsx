@@ -27,26 +27,48 @@ export const TabFolder = (props: TabFolderProps) => {
             setActive(child.props.value)
         }
         return (
-            <div key={child.props.value} className={classNames('tab-button', active === child.props.value ? 'active' : '')} onClick={onClick} tabIndex={0}>
+            <div key={child.props.value} className={classNames('tab-head', active === child.props.value ? 'active' : '')} onClick={onClick} tabIndex={0}>
                 <div className='label'>{child.props.label || child.props.value}</div>
             </div>
         )
     })
+
     const items = props.children.map((child) => {
+        const bodyGroupStyle: React.CSSProperties = {
+            flexGrow: 1,
+            display: 'flex',
+            flexWrap: 'nowrap',
+            alignItems: 'stretch',
+        }
+        if (active !== child.props.value) {
+            bodyGroupStyle.display = 'none';
+        }
+
         return (
-            <div key={child.props.value} className={classNames(props.className, 'tab-item', active === child.props.value ? 'active' : '')}>
+            <div key={child.key} className='tab-body' style={bodyGroupStyle}>
                 {child}
             </div>
         )
     })
+
+    const containerStyle: React.CSSProperties = {
+        display: 'flex',
+        flexDirection: 'column',
+        flexWrap: 'nowrap',
+        justifyContent: 'start',
+        alignItems: 'stretch',
+    };
+
+    const headGroupStyle: React.CSSProperties = {
+        flexGrow: 0,
+    }
+
     return (
-        <div className={classNames(props.className, 'tab-folder')}>
-            <div className='tab-button-group'>
+        <div className={classNames('tab-folder', props.className)} style={containerStyle}>
+            <div className='tab-head-group' style={headGroupStyle}>
                 {buttons}
             </div>
-            <div className='tab-item-group'>
-                {items}
-            </div>
+            {items}
         </div>
     )
 }

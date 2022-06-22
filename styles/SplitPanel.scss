@@ -1,0 +1,17 @@
+.split-panel {
+    .split-start, .split-end {
+        background-color: white;
+    }
+
+    .split-bar {
+        background-color: black;
+        user-select: none;
+
+        &.dir-v {
+            cursor: col-resize;
+        }
+        &.dir-h {
+            cursor: row-resize;
+        }
+    }
+}

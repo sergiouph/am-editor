@@ -1,6 +1,5 @@
+const JSON_NUMBER = `
 @title JSON Number
-
-number:
 
 -> q0
 
@@ -20,3 +19,10 @@ q6 -> q7 : "+", "-"
 q6, q7, q8 -> q8 : [0-9]
 
 q1, q2, q5, q8 <=
+`.trim();
+
+export function getInitialAutomaton() {
+    const params = new URLSearchParams(window.location.search)
+
+    return JSON_NUMBER;
+}
